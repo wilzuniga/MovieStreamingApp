@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.content.Intent;
 import android.view.View;
@@ -48,6 +49,8 @@ public class LoginActivity extends AppCompatActivity {
     private EditText userEdt, passEdt;
     private Button loginBtn;
 
+    private TextView textView8;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +71,7 @@ public class LoginActivity extends AppCompatActivity {
         userEdt = findViewById(R.id.editTextText2);
         passEdt = findViewById(R.id.editTextPassword);
         loginBtn = findViewById(R.id.loginBtn);
+        textView8 = findViewById(R.id.textView8);
 
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,17 +81,17 @@ public class LoginActivity extends AppCompatActivity {
 
                 //si esta vacia
                 if (user.isEmpty() || pass.isEmpty()) {
-
-                } else{
+                    Toast.makeText(LoginActivity.this, "Ingresar usuario y contraseña", Toast.LENGTH_SHORT).show();
+                } else {
                     //Autenticacion usuario
-                    mAuth.createUserWithEmailAndPassword(user, pass)
+                    mAuth.signInWithEmailAndPassword(user, pass)
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
 
                                         //Create new user
-                                        Toast.makeText(LoginActivity.this, "User:Created", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(LoginActivity.this, "User:Aunthenticated", Toast.LENGTH_SHORT).show();
                                         //http request to load the user data
                                         try {
                                             POSTRequest(user);
@@ -105,7 +109,6 @@ public class LoginActivity extends AppCompatActivity {
                                     }
 
 
-
                                 }
                             });
                 }
@@ -116,6 +119,16 @@ public class LoginActivity extends AppCompatActivity {
                 }else{
                     Toast.makeText(LoginActivity.this, "Usuario o contraseña incorrecta", Toast.LENGTH_SHORT).show();
                 } /*/
+
+
+            }
+
+        });
+
+        textView8.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
             }
         });
     }
