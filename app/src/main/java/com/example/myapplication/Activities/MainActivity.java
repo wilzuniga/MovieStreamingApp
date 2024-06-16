@@ -7,14 +7,19 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
-
 import android.os.Handler;
 import android.view.View;
+import android.widget.ProgressBar;
+
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.CompositePageTransformer;
 import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
+
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
 import com.example.myapplication.Adaptadores.SliderAdapters;
 import com.example.myapplication.Dominio.SliderItems;
 
@@ -27,6 +32,10 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private RecyclerView.Adapter adapterTopMovies, adapterUpcomingMovies, adapterCategoryMovies;
     private  RecyclerView recyclerViewTopMovies, recyclerViewUpcomingMovies, recyclerViewCategoryMovies;
+    private RequestQueue mRequestQueue;
+    private StringRequest mStringRequest, mStringRequest2, mStringRequest3;
+    private ProgressBar loading, loading2, loading3;
+
 
     private ViewPager2 viewPager2;
     private Handler sliderHandler = new Handler();
@@ -48,6 +57,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void initView() {
         viewPager2 = findViewById(R.id.viewPagerSlider);
+        recyclerViewTopMovies = findViewById(R.id.view1);
+        recyclerViewTopMovies.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        recyclerViewUpcomingMovies = findViewById(R.id.view2);
+        recyclerViewUpcomingMovies.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        recyclerViewCategoryMovies = findViewById(R.id.view3);
+        recyclerViewCategoryMovies.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        loading = findViewById(R.id.progressBar1);
+        loading2 = findViewById(R.id.progressBar2);
+        loading3 = findViewById(R.id.progressBar3);
     }
 
     private void banners() {
