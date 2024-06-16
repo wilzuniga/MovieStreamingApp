@@ -2,6 +2,7 @@
 package com.example.myapplication.Activities;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.Button;
 import android.widget.Toast;
@@ -39,7 +40,9 @@ import okhttp3.Response;
 
 public class LoginActivity extends AppCompatActivity {
     //Autenticador Firebase
-    public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
+    public  static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
+
+
     private FirebaseAuth mAuth;
     private OkHttpClient client = new OkHttpClient();
     private EditText userEdt, passEdt;
@@ -100,6 +103,9 @@ public class LoginActivity extends AppCompatActivity {
                                                 Toast.LENGTH_SHORT).show();
 
                                     }
+
+
+
                                 }
                             });
                 }
@@ -136,10 +142,12 @@ public class LoginActivity extends AppCompatActivity {
     //post Request to the backend
     public void POSTRequest(String user) throws JSONException {
         //put the user in a JSON
-        JSONObject userJSON = new JSONObject();
-        userJSON.put("user",user);
 
-        String userJsonString = user.toString();
+        JSONObject userJSON = new JSONObject();
+        userJSON.put("email",user);
+
+        String userJsonString = userJSON.toString();
+
         //post user data to the backend
         RequestBody body = RequestBody.create(userJsonString, JSON);
         Request request = new Request.Builder()
@@ -149,7 +157,8 @@ public class LoginActivity extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                e.printStackTrace();
+
+                Log.d("JSONFAILURE",e.getMessage()); ;
             }
 
             @Override
@@ -158,8 +167,8 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         try {
-                            System.out.println(response.body().string());
-                        } catch (IOException e) {
+                            Log.d("JSON", "CALLBACK SUCCESS");
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
