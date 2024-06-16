@@ -85,7 +85,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                         //Create new user
                                         Toast.makeText(LoginActivity.this, "User:Created", Toast.LENGTH_SHORT).show();
-                                        //at same time send a http request to load the user data
+                                        //http request to load the user data
                                         try {
                                             POSTRequest(user);
                                         } catch (JSONException e) {
