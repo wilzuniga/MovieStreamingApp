@@ -17,10 +17,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.myapplication.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
+
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,7 +37,6 @@ public class RegisterActivity extends AppCompatActivity {
     public  static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
 
-    private FirebaseAuth mAuth;
     private OkHttpClient client = new OkHttpClient();
 
     private EditText userEdt, passEdt;
@@ -53,7 +49,6 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_register);
-        mAuth = FirebaseAuth.getInstance();
         client = new OkHttpClient();
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -81,42 +76,15 @@ public class RegisterActivity extends AppCompatActivity {
                     Toast.makeText(RegisterActivity.this, "Ingresar usuario y contraseña", Toast.LENGTH_SHORT).show();
                 } else{
                     //Autenticacion usuario
-                    mAuth.createUserWithEmailAndPassword(user, pass)
-                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (task.isSuccessful()) {
-
-                                        //Create new user
-                                        Toast.makeText(RegisterActivity.this, "User:Created", Toast.LENGTH_SHORT).show();
-                                        //http request to load the user data
-                                        try {
-                                            POSTRequest(user);
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
-                                        }
-                                        startActivity(new Intent(RegisterActivity.this, MainActivity.class));
-
-                                    } else {
-
-                                        System.out.println("createUserWithEmail:failure");
-                                        Toast.makeText(RegisterActivity.this, "Authentication failed.",
-                                                Toast.LENGTH_SHORT).show();
-
-                                    }
-
-
-
-                                }
-                            });
+                    try {
+                        POSTSignUp(user, pass);
+                        Toast.makeText(RegisterActivity.this, "AUNTHENTICATED", Toast.LENGTH_SHORT).show();
+                    } catch (JSONException e) {
+                        Toast.makeText(RegisterActivity.this, "AUNTHENTICATION FAILED", Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
+                    startActivity(new Intent(RegisterActivity.this, MainActivity.class));
                 }
-
-
-                /*else if(user.equals("coso") && pass.equals("coso")){
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                }else{
-                    Toast.makeText(LoginActivity.this, "Usuario o contraseña incorrecta", Toast.LENGTH_SHORT).show();
-                } /*/
 
 
             }
@@ -145,14 +113,15 @@ public class RegisterActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_FULLSCREEN);
     }
     //post Request to the backend
-    public void POSTRequest(String user) throws JSONException {
+    public void POSTSignUp(String user, String email) throws JSONException {
         //put the user in a JSON
 
         JSONObject userJSON = new JSONObject();
         userJSON.put("email",user);
+        userJSON.put("password",email);
 
         String userJsonString = userJSON.toString();
-
+        Log.d("JSON", "userJsonString: " + userJsonString);
         //post user data to the backend
         RequestBody body = RequestBody.create(userJsonString, JSON);
         Request request = new Request.Builder()
@@ -173,8 +142,10 @@ public class RegisterActivity extends AppCompatActivity {
                     public void run() {
                         try {
                             Log.d("JSON", "CALLBACK SUCCESS");
+                            Toast.makeText(RegisterActivity.this, "ACCOUNT CREATED", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(RegisterActivity.this, MainActivity.class));
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            Toast.makeText(RegisterActivity.this, "FAILED CREATING ACCOUNT", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

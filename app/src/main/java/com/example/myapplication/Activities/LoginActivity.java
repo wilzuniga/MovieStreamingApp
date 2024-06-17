@@ -20,15 +20,12 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.myapplication.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -44,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
     public  static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
 
-    private FirebaseAuth mAuth;
+
     private OkHttpClient client = new OkHttpClient();
     private EditText userEdt, passEdt;
     private Button loginBtn;
@@ -56,7 +53,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
-        mAuth = FirebaseAuth.getInstance();
         client = new OkHttpClient();
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -83,42 +79,16 @@ public class LoginActivity extends AppCompatActivity {
                 if (user.isEmpty() || pass.isEmpty()) {
                     Toast.makeText(LoginActivity.this, "Ingresar usuario y contraseña", Toast.LENGTH_SHORT).show();
                 } else {
-                    //Autenticacion usuario
-                    mAuth.signInWithEmailAndPassword(user, pass)
-                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (task.isSuccessful()) {
+                    //si no esta vacia
+                    try {
+                        POSTsignIn(user, pass);
+                    } catch (JSONException e) {
 
-                                        //Create new user
-                                        Toast.makeText(LoginActivity.this, "User:Aunthenticated", Toast.LENGTH_SHORT).show();
-                                        //http request to load the user data
-                                        try {
-                                            POSTRequest(user);
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
-                                        }
-                                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        e.printStackTrace();
+                    }
 
-                                    } else {
-
-                                        System.out.println("createUserWithEmail:failure");
-                                        Toast.makeText(LoginActivity.this, "Authentication failed.",
-                                                Toast.LENGTH_SHORT).show();
-
-                                    }
-
-
-                                }
-                            });
                 }
 
-
-                /*else if(user.equals("coso") && pass.equals("coso")){
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                }else{
-                    Toast.makeText(LoginActivity.this, "Usuario o contraseña incorrecta", Toast.LENGTH_SHORT).show();
-                } /*/
 
 
             }
@@ -153,25 +123,27 @@ public class LoginActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_FULLSCREEN);
     }
     //post Request to the backend
-    public void POSTRequest(String user) throws JSONException {
-        //put the user in a JSON
-
+    public void POSTsignIn(String email, String password) throws JSONException {
+        //put the user in sa JSON
         JSONObject userJSON = new JSONObject();
-        userJSON.put("email",user);
+        userJSON.put("email",email);
+        userJSON.put("password",password);
 
         String userJsonString = userJSON.toString();
+        Log.d("JSON", "userJsonString: " + userJsonString);
 
         //post user data to the backend
         RequestBody body = RequestBody.create(userJsonString, JSON);
         Request request = new Request.Builder()
-                .url("http://localhost:3001/signup")
+                .url("https://api.cosomovies.xyz/api/login/signin")
                 .post(body)
                 .build();
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
 
-                Log.d("JSONFAILURE",e.getMessage()); ;
+                Log.d("JSONFAILURE","CALLBACK FAILURE");
+
             }
 
             @Override
@@ -180,9 +152,11 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         try {
-                            Log.d("JSON", "CALLBACK SUCCESS");
+                            Log.d("JSON", "response: " + response.body().string());
+                            Toast.makeText(LoginActivity.this, "AUTH SUCCESS", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            Toast.makeText(LoginActivity.this, "AUTH FAILED", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
