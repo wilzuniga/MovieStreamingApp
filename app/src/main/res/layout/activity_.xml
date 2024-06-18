@@ -26,11 +26,10 @@
                 android:ems="10"
                 android:background="@drawable/edittext_background"
                 android:inputType="text"
-                android:drawableStart="@drawable/search"
                 android:layout_margin="16dp"
                 android:drawablePadding="8dp"
                 android:padding="12dp"
-                android:drawableEnd="@drawable/microphone"
+                android:drawableEnd="@drawable/search"
                 android:hint="Buscar"
                 android:textColorHint="@color/white"/>
 
