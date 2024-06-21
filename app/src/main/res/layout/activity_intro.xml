@@ -77,7 +77,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
-                    android:text="Disfruta navegando series y pelucula por genero, busca titulos en especifico o encuentra algo en nuestras recomendaciones para ti..."
+                    android:text="Disfruta navegando series y peliculas por genero, busca titulos en especifico o encuentra algo en nuestras recomendaciones para ti..."
                     android:textColor="#9F9A9A"
                     android:textSize="17dp" />
 

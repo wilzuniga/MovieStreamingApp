@@ -2,6 +2,7 @@ package com.example.myapplication.Activities;
 
 import static java.lang.Character.getType;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -12,7 +13,9 @@ import androidx.core.view.ViewCompat;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -44,12 +47,13 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private RecyclerView.Adapter adapterTopMovies, adapterUpcomingMovies, adapterCategoryMovies;
+    private TextView searchBar;
     private  RecyclerView recyclerViewTopMovies, recyclerViewUpcomingMovies, recyclerViewCategoryMovies;
     private RequestQueue mRequestQueue;
     private StringRequest mStringRequest, mStringRequest2, mStringRequest3;
     private ProgressBar loading, loading2, loading3;
 
-
+    private ImageView favs, cartelera, top ;
     private ViewPager2 viewPager2;
     private Handler sliderHandler = new Handler();
 
@@ -57,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_);
+        setContentView(R.layout.activity_main);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -69,6 +73,25 @@ public class MainActivity extends AppCompatActivity {
         sendRequestBestMovies();
         sendRequestProxMovies();
         sendRequestCategorias();
+
+        searchBar.setOnClickListener(v -> {
+            startActivity(new Intent(MainActivity.this, ActivityVaria.class));
+        });
+
+        favs.setOnClickListener(v -> {
+            startActivity(new Intent(MainActivity.this, FavoritosActivity.class));
+        });
+
+        cartelera.setOnClickListener(v -> {
+            startActivity(new Intent(MainActivity.this, CarteleraActivity.class));
+        });
+
+        top.setOnClickListener(v -> {
+            startActivity(new Intent(MainActivity.this, TopActivity.class));
+        });
+
+
+
     }
 
     private void sendRequestBestMovies() {//hace el llenado de la seccion de mejores peliculas
@@ -150,6 +173,10 @@ public class MainActivity extends AppCompatActivity {
         loading = findViewById(R.id.progressBar1);
         loading2 = findViewById(R.id.progressBar2);
         loading3 = findViewById(R.id.progressBar3);
+        searchBar = findViewById(R.id.searchBar);
+        favs = findViewById(R.id.favview);
+        cartelera = findViewById(R.id.cartelera);
+        top = findViewById(R.id.top);
     }
 
     private void banners() {
