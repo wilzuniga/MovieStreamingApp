@@ -58,6 +58,7 @@ public class FavoritosActivity extends AppCompatActivity {
         });
 
         initView();
+
         sendRequestSearchMovie();
         Explorar.setOnClickListener(v -> {
             startActivity(new Intent(FavoritosActivity.this, MainActivity.class));
