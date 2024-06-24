@@ -72,7 +72,7 @@ public class CarteleraActivity extends AppCompatActivity {
         });
         Fav.setOnClickListener(v -> {
 
-            Intent intent = new Intent(CarteleraActivity.this, CarteleraActivity.class);
+            Intent intent = new Intent(CarteleraActivity.this, FavoritosActivity.class);
             intent.putExtra("user", user );
             startActivity(intent);
 
