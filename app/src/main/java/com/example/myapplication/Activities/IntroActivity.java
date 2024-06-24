@@ -42,6 +42,7 @@ public class IntroActivity extends AppCompatActivity {
     }
 
     //oculta la barra de navegacion y la barra de estado
+    //
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
