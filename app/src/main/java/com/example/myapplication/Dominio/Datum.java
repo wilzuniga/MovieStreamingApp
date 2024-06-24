@@ -13,7 +13,7 @@ public class Datum {
     @SerializedName("title")
     @Expose
     private String title;
-    @SerializedName("poster")
+    @SerializedName("poster_path")
     @Expose
     private String poster;
     @SerializedName("year")

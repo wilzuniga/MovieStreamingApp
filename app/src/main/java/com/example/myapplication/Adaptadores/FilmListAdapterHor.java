@@ -15,67 +15,75 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.myapplication.Activities.DetailActivity;
-import com.example.myapplication.Dominio.ListFilm;
+import com.example.myapplication.Dominio.Datum;
 import com.example.myapplication.R;
 
 import org.jetbrains.annotations.NotNull;
 
-public class FilmListAdapterHor extends RecyclerView.Adapter<FilmListAdapterHor.viewHolder>{
+import java.util.List;
 
-    ListFilm items;
-    Context context;
+public class FilmListAdapterHor extends RecyclerView.Adapter<FilmListAdapterHor.ViewHolder> {
 
-    public FilmListAdapterHor(ListFilm items) {
+    private List<Datum> items;
+    private Context context;
+    private String user;
+
+    private static final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w600_and_h900_bestv2/";
+
+
+    public FilmListAdapterHor(List<Datum> items, String user) {
         this.items = items;
+        this.user = user;
     }
 
+
+
+    @NotNull
     @Override
-    public FilmListAdapterHor.viewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
         context = parent.getContext();
-        View inflatedView = LayoutInflater.from(context).inflate(R.layout.viewholder_filmshor, parent, false);
-        return new viewHolder(inflatedView);
+        View view = LayoutInflater.from(context).inflate(R.layout.viewholder_filmshor, parent, false);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(FilmListAdapterHor.viewHolder holder, int position) {
-        holder.titleTxt.setText(items.getData().get(position).getTitle());
-        holder.moviecat.setText(items.getData().get(position).getGenres().get(0));
-        holder.movieYeartx.setText(items.getData().get(position).getYear());
-        RequestOptions requestOptions = new RequestOptions();
-        requestOptions = requestOptions.transforms(new CenterCrop(), new RoundedCorners(30));
+    public void onBindViewHolder(@NotNull ViewHolder holder, int position) {
+        Datum datum = items.get(position);
+
+        holder.titleTxt.setText(datum.getTitle());
+        // Aquí configuramos las opciones para Glide
+        RequestOptions requestOptions = new RequestOptions()
+                .transforms(new CenterCrop(), new RoundedCorners(30));
+
+        String posterUrl = BASE_IMAGE_URL + datum.getPoster();
+
 
         Glide.with(context)
-                .load(items.getData().get(position).getPoster())
+                .load(posterUrl)
                 .apply(requestOptions)
                 .into(holder.pic);
-        
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(holder.itemView.getContext(), DetailActivity.class);
-                intent.putExtra("id", items.getData().get(position).getId());
-                context.startActivity(intent);
-            }
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, DetailActivity.class);
+            intent.putExtra("id", datum.getId());
+            intent.putExtra("user", user );
+            context.startActivity(intent);
         });
     }
 
     @Override
     public int getItemCount() {
-        return items.getData().size();
+        return items.size();
     }
 
-    public class viewHolder extends RecyclerView.ViewHolder {
-        TextView titleTxt, movieYeartx, moviecat;
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        TextView titleTxt;
         ImageView pic;
 
-
-        public viewHolder(@NotNull View itemView) {
+        public ViewHolder(@NotNull View itemView) {
             super(itemView);
             titleTxt = itemView.findViewById(R.id.MovieTitleTxt);
             pic = itemView.findViewById(R.id.piccs);
-            movieYeartx = itemView.findViewById(R.id.MovieYearTxt);
-            moviecat = itemView.findViewById(R.id.MovieCategoryTxt);
         }
     }
-
 }

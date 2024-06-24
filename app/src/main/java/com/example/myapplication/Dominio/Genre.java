@@ -1,9 +1,10 @@
+
 package com.example.myapplication.Dominio;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class GenresItem {
+public class Genre {
 
     @SerializedName("id")
     @Expose
@@ -12,7 +13,6 @@ public class GenresItem {
     @Expose
     private String name;
 
-    // Getters and Setters
     public Integer getId() {
         return id;
     }
@@ -28,4 +28,5 @@ public class GenresItem {
     public void setName(String name) {
         this.name = name;
     }
+
 }

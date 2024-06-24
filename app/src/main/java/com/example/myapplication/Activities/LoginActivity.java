@@ -134,10 +134,13 @@ public class LoginActivity extends AppCompatActivity {
 
         //post user data to the backend
         RequestBody body = RequestBody.create(userJsonString, JSON);
+        System.out.println(body.toString());
         Request request = new Request.Builder()
                 .url("https://api.cosomovies.xyz/api/login/signin")
                 .post(body)
                 .build();
+
+        System.out.println(request.body().toString());
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
@@ -154,7 +157,10 @@ public class LoginActivity extends AppCompatActivity {
                         try {
                             Log.d("JSON", "response: " + response.body().string());
                             Toast.makeText(LoginActivity.this, "AUTH SUCCESS", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            String token = email;
+                            intent.putExtra("user", token);
+                            startActivity(intent);
                         } catch (Exception e) {
                             Toast.makeText(LoginActivity.this, "AUTH FAILED", Toast.LENGTH_SHORT).show();
                         }

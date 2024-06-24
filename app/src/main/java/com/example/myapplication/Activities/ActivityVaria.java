@@ -1,5 +1,6 @@
 package com.example.myapplication.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -12,6 +13,7 @@ import androidx.core.view.ViewCompat;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
@@ -31,9 +33,12 @@ import com.android.volley.toolbox.Volley;
 import com.example.myapplication.Adaptadores.CategoryListAdapter;
 import com.example.myapplication.Adaptadores.FilmListAdapter;
 import com.example.myapplication.Adaptadores.FilmListAdapterHor;
+import com.example.myapplication.Adaptadores.FilmListAdapterHorSearch;
 import com.example.myapplication.Adaptadores.SliderAdapters;
+import com.example.myapplication.Dominio.Datum;
 import com.example.myapplication.Dominio.GenresItem;
 import com.example.myapplication.Dominio.ListFilm;
+import com.example.myapplication.Dominio.SearchMovieItem;
 import com.example.myapplication.Dominio.SliderItems;
 
 import com.example.myapplication.R;
@@ -41,16 +46,54 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 public class ActivityVaria extends AppCompatActivity {
 
     private RecyclerView.Adapter adapterSearchedMovies;
     private RecyclerView recyclerViewSearchedMovies;
     private RequestQueue mRequestQueue;
-
     private ImageView backImg;
     private StringRequest mStringRequest;
     private ProgressBar loading;
+
+    private void sendRequestSearchMovie() {
+        Intent intent = getIntent();
+        String searchText = intent.getStringExtra("searchText");
+        mRequestQueue = Volley.newRequestQueue(this);
+        loading.setVisibility(View.VISIBLE);
+        System.out.println(searchText);
+        mStringRequest = new StringRequest(Request.Method.GET, "https://api.cosomovies.xyz/api/utils/search/movie/" + searchText, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                System.out.println("holi2");
+                Gson gson = new Gson();
+                loading.setVisibility(View.GONE);
+                Log.d("onResponse: ", response);
+
+                // Parse the JSON response into a ListFilm object
+                SearchMovieItem[] datumArray = gson.fromJson(response, SearchMovieItem[].class);
+
+                // Get the list of Datum objects from the ListFilm object
+                List<SearchMovieItem> dataList = Arrays.asList(datumArray);
+
+                // Initialize and set the adapter
+                adapterSearchedMovies = new FilmListAdapterHorSearch(dataList);
+                recyclerViewSearchedMovies.setAdapter(adapterSearchedMovies);
+            }
+
+
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                loading.setVisibility(View.GONE);
+                Log.i("Errorijillo", "on error response:" + error.toString());
+            }
+        });
+        mRequestQueue.add(mStringRequest);
+    }
+
 
 
 
@@ -71,29 +114,6 @@ public class ActivityVaria extends AppCompatActivity {
 
     }
 
-    private void sendRequestSearchMovie(){
-        mRequestQueue = Volley.newRequestQueue(this);
-        loading.setVisibility(View.VISIBLE);
-        /*En la siguiente linea se llama una lista de peliculas desde el api que estes utilizando,
-        * el cambio que tenes que hacer aca va a ser poner el link del api de walther y llamar
-        * el campo de texto en el cual se escribe en el MAINACTIVITY*/
-        mStringRequest = new StringRequest(Request.Method.GET, "https://moviesapi.ir/api/v1/movies?page=2", new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                loading.setVisibility(View.GONE);
-                Gson gson = new Gson();
-                ListFilm results = gson.fromJson(response, ListFilm.class);;
-                adapterSearchedMovies = new FilmListAdapterHor(results);
-                recyclerViewSearchedMovies.setAdapter(adapterSearchedMovies);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.i("Errorijillo", "on error response:" + error.toString());
-            }
-        });
-        mRequestQueue.add(mStringRequest);
-    }
     private void initView() {
         recyclerViewSearchedMovies = findViewById(R.id.recyclerViewSearchedMovies);
         recyclerViewSearchedMovies.setHasFixedSize(true);

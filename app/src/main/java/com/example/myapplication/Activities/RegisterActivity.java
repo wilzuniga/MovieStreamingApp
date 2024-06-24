@@ -78,12 +78,10 @@ public class RegisterActivity extends AppCompatActivity {
                     //Autenticacion usuario
                     try {
                         POSTSignUp(user, pass);
-                        Toast.makeText(RegisterActivity.this, "AUNTHENTICATED", Toast.LENGTH_SHORT).show();
                     } catch (JSONException e) {
-                        Toast.makeText(RegisterActivity.this, "AUNTHENTICATION FAILED", Toast.LENGTH_SHORT).show();
                         e.printStackTrace();
                     }
-                    startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+
                 }
 
 
@@ -131,8 +129,7 @@ public class RegisterActivity extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-
-                Log.d("JSONFAILURE",e.getMessage()); ;
+                Log.d("JSONFAILURE", e.getMessage());
             }
 
             @Override
@@ -142,15 +139,33 @@ public class RegisterActivity extends AppCompatActivity {
                     public void run() {
                         try {
                             Log.d("JSON", "CALLBACK SUCCESS");
-                            Toast.makeText(RegisterActivity.this, "ACCOUNT CREATED", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+
+                            // Log the response code
+                            int responseCode = response.code();
+                            Log.d("JSON", "Response Code: " + responseCode);
+
+                            // Log the response body
+                            String responseBody = response.body().string();
+                            Log.d("JSON", "Response Body: " + responseBody);
+
+                            if (responseCode == 200) {
+                                Toast.makeText(RegisterActivity.this, "ACCOUNT CREATED", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                                String token = email;
+                                intent.putExtra("user", token);
+                                startActivity(intent);
+                            } else {
+                                Toast.makeText(RegisterActivity.this, "FAILED CREATING ACCOUNT: " + responseBody, Toast.LENGTH_SHORT).show();
+                            }
                         } catch (Exception e) {
+                            Log.d("JSON", "Exception: " + e.getMessage());
                             Toast.makeText(RegisterActivity.this, "FAILED CREATING ACCOUNT", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
             }
-        } );
+        });
+
 
     }
 
