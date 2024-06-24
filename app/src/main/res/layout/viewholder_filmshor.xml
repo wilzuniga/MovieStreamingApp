@@ -36,26 +36,6 @@
                 android:textSize="18dp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/MovieYearTxt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8sp"
-                android:text="Año"
-                android:textColor="@color/white"
-                android:textSize="12dp"
-                android:textStyle="normal"/>
-
-            <TextView
-                android:id="@+id/MovieCategoryTxt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="4sp"
-                android:background="@drawable/cat_background"
-                android:padding="4dp"
-                android:text="categoria"
-                android:textColor="@color/white" />
-
         </LinearLayout>
 
     </LinearLayout>

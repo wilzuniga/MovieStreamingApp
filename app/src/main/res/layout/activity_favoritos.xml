@@ -19,22 +19,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
-            <EditText
-                android:id="@+id/searchBar"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:ems="10"
-                android:background="@drawable/edittext_background"
-                android:inputType="text"
-                android:layout_margin="16dp"
-                android:drawablePadding="8dp"
-                android:textColor="@color/white"
-                android:searchResultHighlightColor="@color/white"
-                android:padding="12dp"
-                android:drawableEnd="@drawable/search"
-                android:hint="Buscar"
-                android:textColorHint="@color/white"/>
-
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">

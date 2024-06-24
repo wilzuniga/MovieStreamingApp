@@ -73,7 +73,9 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:src="@drawable/fav" />
+                    android:src="@drawable/fav"
+                    app:tint="@color/orange"
+                    />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -170,8 +172,9 @@
 
             <TextView
                 android:id="@+id/movieSummary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="24dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
                 android:text="test"
@@ -180,36 +183,6 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/textView20"
                 app:layout_constraintTop_toBottomOf="@id/textView20" />
-
-            <TextView
-                android:id="@+id/textView22"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Actores"
-                android:textColor="@color/yellow"
-                android:textSize="16sp"
-                app:layout_constraintStart_toStartOf="@+id/textView20"
-                app:layout_constraintTop_toBottomOf="@id/movieSummary" />
-
-            <TextView
-                android:id="@+id/MovieActorInfo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="test"
-                android:textColor="@color/white"
-                app:layout_constraintStart_toStartOf="@+id/textView22"
-                app:layout_constraintTop_toBottomOf="@id/textView22" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/ActorRecyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/MovieActorInfo"
-                app:layout_constraintTop_toBottomOf="@id/MovieActorInfo" />
 
             /
 

@@ -13,6 +13,7 @@ import androidx.core.view.ViewCompat;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -33,27 +34,42 @@ import com.android.volley.toolbox.Volley;
 import com.example.myapplication.Adaptadores.CategoryListAdapter;
 import com.example.myapplication.Adaptadores.FilmListAdapter;
 import com.example.myapplication.Adaptadores.SliderAdapters;
+import com.example.myapplication.Dominio.Datum;
 import com.example.myapplication.Dominio.GenresItem;
+import com.example.myapplication.Dominio.GenresResponse;
 import com.example.myapplication.Dominio.ListFilm;
 import com.example.myapplication.Dominio.SliderItems;
 
 
 import com.example.myapplication.R;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
+
 
 public class MainActivity extends AppCompatActivity {
     private RecyclerView.Adapter adapterTopMovies, adapterUpcomingMovies, adapterCategoryMovies;
+    public  static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
+
     private TextView searchBar;
     private  RecyclerView recyclerViewTopMovies, recyclerViewUpcomingMovies, recyclerViewCategoryMovies;
     private RequestQueue mRequestQueue;
+    private OkHttpClient client = new OkHttpClient();
+
     private StringRequest mStringRequest, mStringRequest2, mStringRequest3;
     private ProgressBar loading, loading2, loading3;
 
     private ImageView favs, cartelera, top ;
+    private EditText searched;
+    private String user;
     private ViewPager2 viewPager2;
     private Handler sliderHandler = new Handler();
 
@@ -62,32 +78,48 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+        client = new OkHttpClient();
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
+
+
+
         initView();
+        user = getIntent().getStringExtra("user");
+        System.out.println("user en el mainnnn e inveeded" + user);
         banners();
         sendRequestBestMovies();
         sendRequestProxMovies();
         sendRequestCategorias();
 
+        EditText searched = findViewById(R.id.searchBar);
         searchBar.setOnClickListener(v -> {
-            startActivity(new Intent(MainActivity.this, ActivityVaria.class));
+            Intent intent = new Intent(MainActivity.this, ActivityVaria.class);
+            intent.putExtra("user", user );
+            intent.putExtra("searchText", searched.getText().toString());
+            startActivity(intent);
         });
 
         favs.setOnClickListener(v -> {
-            startActivity(new Intent(MainActivity.this, FavoritosActivity.class));
+            Intent intent = new Intent(MainActivity.this, FavoritosActivity.class);
+            intent.putExtra("user", user );
+            startActivity(intent);
         });
 
         cartelera.setOnClickListener(v -> {
-            startActivity(new Intent(MainActivity.this, CarteleraActivity.class));
+            Intent intent = new Intent(MainActivity.this, CarteleraActivity.class);
+            intent.putExtra("user", user );
+            startActivity(intent);
         });
 
         top.setOnClickListener(v -> {
-            startActivity(new Intent(MainActivity.this, TopActivity.class));
+            Intent intent = new Intent(MainActivity.this, TopActivity.class);
+            intent.putExtra("user", user );
+            startActivity(intent);
         });
 
 
@@ -97,15 +129,27 @@ public class MainActivity extends AppCompatActivity {
     private void sendRequestBestMovies() {//hace el llenado de la seccion de mejores peliculas
         mRequestQueue = Volley.newRequestQueue(this);
         loading.setVisibility(View.VISIBLE);
-        mStringRequest= new StringRequest(Request.Method.GET, "https://moviesapi.ir/api/v1/movies?page=1", new Response.Listener<String>() {
+        mStringRequest= new StringRequest(Request.Method.GET, "https://api.cosomovies.xyz/api/utils/toprated", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Gson gson = new Gson();
                 loading.setVisibility(View.GONE);
-                ListFilm items = gson.fromJson(response, ListFilm.class);
-                adapterTopMovies = new FilmListAdapter(items);
+
+                // Assuming response is an array of Datum objects
+                Datum[] datumArray = gson.fromJson(response, Datum[].class);
+
+                // Convert array to List<Datum> if needed
+                List<Datum> items = Arrays.asList(datumArray);
+
+                Intent in = getIntent();
+                String user = in.getStringExtra("user");
+                System.out.println("user en el main" + user);
+
+                // Set the adapter with the list of Datum objects
+                adapterTopMovies = new FilmListAdapter(items, user);
                 recyclerViewTopMovies.setAdapter(adapterTopMovies);
             }
+
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -116,18 +160,31 @@ public class MainActivity extends AppCompatActivity {
         mRequestQueue.add(mStringRequest);
     }
 
+
     private void sendRequestProxMovies() {//hace el llenado de la seccion de proximas peliculas
         mRequestQueue = Volley.newRequestQueue(this);
         loading3.setVisibility(View.VISIBLE);
-        mStringRequest3= new StringRequest(Request.Method.GET, "https://moviesapi.ir/api/v1/movies?page=2", new Response.Listener<String>() {
+        mStringRequest3= new StringRequest(Request.Method.GET, "https://api.cosomovies.xyz/api/utils/upcoming", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Gson gson = new Gson();
                 loading3.setVisibility(View.GONE);
-                ListFilm items = gson.fromJson(response, ListFilm.class);
-                adapterUpcomingMovies = new FilmListAdapter(items);
+
+                // Assuming response is an array of Datum objects
+                Datum[] datumArray = gson.fromJson(response, Datum[].class);
+
+                // Convert array to List<Datum> if needed
+                List<Datum> items = Arrays.asList(datumArray);
+
+                Intent in = getIntent();
+                String user = in.getStringExtra("user");
+                System.out.println(user);
+
+                // Set the adapter with the list of Datum objects
+                adapterUpcomingMovies = new FilmListAdapter(items, user);
                 recyclerViewUpcomingMovies.setAdapter(adapterUpcomingMovies);
             }
+
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -141,17 +198,23 @@ public class MainActivity extends AppCompatActivity {
     private void sendRequestCategorias() {//hace el llenado de la seccion de etiquetas de categoria
         mRequestQueue = Volley.newRequestQueue(this);
         loading2.setVisibility(View.VISIBLE);
-        mStringRequest2= new StringRequest(Request.Method.GET, "https://moviesapi.ir/api/v1/genres", new Response.Listener<String>() {
+        mStringRequest2= new StringRequest(Request.Method.GET, "https://api.cosomovies.xyz/api/utils/genres", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Gson gson = new Gson();
                 loading2.setVisibility(View.GONE);
-                ArrayList<GenresItem> catList = gson.fromJson(response, new TypeToken<ArrayList<GenresItem>>(){
 
-                }.getType());
+                // Parse the JSON response into a GenresResponse object
+                GenresResponse genresResponse = gson.fromJson(response, GenresResponse.class);
+
+                // Get the list of GenresItem objects from the GenresResponse object
+                List<GenresItem> catList = genresResponse.getGenres();
+
+                // Set the adapter with the list of GenresItem objects
                 adapterCategoryMovies = new CategoryListAdapter(catList);
                 recyclerViewCategoryMovies.setAdapter(adapterCategoryMovies);
             }
+
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {

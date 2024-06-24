@@ -26,20 +26,25 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myapplication.Adaptadores.FilmListAdapterHor;
+import com.example.myapplication.Dominio.Datum;
 import com.example.myapplication.Dominio.ListFilm;
 
 import com.example.myapplication.R;
 import com.google.gson.Gson;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class CarteleraActivity extends AppCompatActivity {
 
     private RecyclerView recyclerViewCartelera;
     private RequestQueue mRequestQueue;
     private TextView searchBar;
-    private RecyclerView.Adapter adapterFavMovies;
+    private RecyclerView.Adapter adapterUpcomingMovies;
 
     private StringRequest mStringRequest;
     private ProgressBar loading;
+    private String user;
 
     private ImageView Explorar, Fav, Top;
 
@@ -55,18 +60,29 @@ public class CarteleraActivity extends AppCompatActivity {
         });
 
         initView();
+        String user = getIntent().getStringExtra("user");
+
         sendRequestCartelera();
+        System.out.println("intent en cartelera" + getIntent().getStringExtra("user"));
         Explorar.setOnClickListener(v -> {
-            startActivity(new Intent(CarteleraActivity.this, MainActivity.class));
+
+            Intent intent = new Intent(CarteleraActivity.this, MainActivity.class);
+            intent.putExtra("user", user );
+            startActivity(intent);
         });
         Fav.setOnClickListener(v -> {
-            startActivity(new Intent(CarteleraActivity.this, FavoritosActivity.class));
+
+            Intent intent = new Intent(CarteleraActivity.this, CarteleraActivity.class);
+            intent.putExtra("user", user );
+            startActivity(intent);
+
         });
         Top.setOnClickListener(v -> {
-            startActivity(new Intent(CarteleraActivity.this, TopActivity.class));
-        });
-        searchBar.setOnClickListener(v -> {
-            startActivity(new Intent(CarteleraActivity.this, ActivityVaria.class));
+
+            Intent intent = new Intent(CarteleraActivity.this, TopActivity.class);
+            intent.putExtra("user", user );
+            startActivity(intent);
+
         });
 
 
@@ -79,31 +95,41 @@ public class CarteleraActivity extends AppCompatActivity {
         loading = findViewById(R.id.progressBarfav);
         Explorar = findViewById(R.id.eplorar);
         Fav = findViewById(R.id.favoritos);
-        searchBar = findViewById(R.id.searchBar);
         Top = findViewById(R.id.top);
 
     }
 
     private void sendRequestCartelera(){
+
         mRequestQueue = Volley.newRequestQueue(this);
         loading.setVisibility(View.VISIBLE);
-        /*En la siguiente linea se llama una lista de peliculas desde el api que estes utilizando,
-         * el cambio que tenes que hacer aca va a ser poner el link del api de walther y llamar
-         * el campo de texto en el cual se escribe en el MAINACTIVITY*/
-        mStringRequest = new StringRequest(Request.Method.GET, "https://moviesapi.ir/api/v1/movies?page=7", new Response.Listener<String>() {
+        System.out.println("holi");
+        mStringRequest = new StringRequest(Request.Method.GET, "https://api.cosomovies.xyz/api/utils/upcoming", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                loading.setVisibility(View.GONE);
+                System.out.println("holi2");
                 Gson gson = new Gson();
-                ListFilm results = gson.fromJson(response, ListFilm.class);;
-                System.out.println(results.getData().get(0).getTitle());
-                adapterFavMovies = new FilmListAdapterHor(results);
-                recyclerViewCartelera.setAdapter(adapterFavMovies);
-                System.out.println("Se ejecuto el onResponse");
+                loading.setVisibility(View.GONE);
+
+                // Parse the JSON response into a ListFilm object
+                Datum[] datumArray = gson.fromJson(response, Datum[].class);
+
+                // Get the list of Datum objects from the ListFilm object
+                List<Datum> dataList = Arrays.asList(datumArray);
+
+                // Initialize and set the adapter
+                Intent intent = getIntent();
+                String user = intent.getStringExtra("user");
+                adapterUpcomingMovies = new FilmListAdapterHor(dataList, user);
+                recyclerViewCartelera.setAdapter(adapterUpcomingMovies);
             }
+
+
         }, new Response.ErrorListener() {
+
             @Override
             public void onErrorResponse(VolleyError error) {
+                loading.setVisibility(View.GONE);
                 Log.i("Errorijillo", "on error response:" + error.toString());
             }
         });

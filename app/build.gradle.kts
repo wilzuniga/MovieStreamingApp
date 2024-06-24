@@ -33,7 +33,6 @@ android {
 }
 
 dependencies {
-
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation(libs.appcompat)
     implementation(libs.material)
@@ -45,4 +44,6 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    implementation(libs.appCenterAnalytics)
+    implementation(libs.appCenterCrashes)
 }
