@@ -26,6 +26,15 @@ Movie Streaming App es una aplicación móvil práctica y compacta diseñada par
 - **Conexión con Backend:** Peticiones a una API remota alojada en AWS.
 - **Uso de LocalStorage y SessionStorage:** Para mantener la experiencia personalizada del usuario.
 
+## Imagenes
+
+# Login del app
+![Imagen de la pagina de login del app](https://raw.githubusercontent.com/wilzuniga/MovieStreamingApp/main/Assets/Login.png)
+# Pagina de inicio del app
+![Imagen de la pagina de inicio del app](https://raw.githubusercontent.com/wilzuniga/MovieStreamingApp/main/Assets/View.png)
+# Detalles de pagina de inicio del app
+![Imagen de detalle de pagina de inicio del app](https://raw.githubusercontent.com/wilzuniga/MovieStreamingApp/main/Assets/view2.png)
+
 ### Back End
 
 - **Arquitectura:** API RESTful en AWS, base de datos relacional en AWS, Firebase para autenticación y MongoDB para gestión de favoritos.
